@@ -9,7 +9,7 @@ from multiapp import MultiApp
 
 OBJ_TYPE = ["person", "car", "bus", "truck", "bicycle", "motorbike"]
 
-def app1():
+def app():
   # load data
   URL = "/Users/ryo/Documents/Lab/Jetson/jetson_csv/9-3/day_grouped_by_まるっとプラザ.csv"
   DF = pd.read_csv(URL)
@@ -21,19 +21,7 @@ def app1():
 
 
   # set sidebar
-  obj_type_selector = st.sidebar.selectbox("Select your favorite flower", OBJ_TYPE)
-
-  date_start = st.sidebar.date_input('開始日',
-                               min_value=date(2021,6,26),
-                               max_value=date(2021,9,3),
-                               value=date(2021, 7, 1),
-                               )
-
-  date_end   = st.sidebar.date_input('終了日',
-                               min_value=date(2021,6,26),
-                               max_value=date(2021,9,3),
-                               value=date(2021, 9, 3),
-                               )
+  obj_type_selector = st.sidebar.selectbox("Select your aaaaaaafavorite flower", OBJ_TYPE)
 
 
   def obj_type(df, obj_type_selector):
@@ -49,6 +37,3 @@ def app1():
 
   obj_type(DF, obj_type_selector)
 
-app = MultiApp()
-app.add_app("page1", app1)
-app.run

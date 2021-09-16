@@ -9,7 +9,7 @@ from multiapp import MultiApp
 
 OBJ_TYPE = ["person", "car", "bus", "truck", "bicycle", "motorbike"]
 
-def app1():
+def app():
   # load data
   URL = "/Users/ryo/Documents/Lab/Jetson/jetson_csv/9-3/day_grouped_by_まるっとプラザ.csv"
   DF = pd.read_csv(URL)
@@ -45,10 +45,12 @@ def app1():
       fig.update_layout(xaxis_title="日付",
                         yaxis_title="数",
                         xaxis_tickformat = '%Y-%m-%d',)
+      fig.add_vrect(
+          x0="2021-08-01", x1="2021-08-06",
+          fillcolor="LightSalmon", opacity=0.5,
+          layer="below", line_width=0,
+      )
       st.plotly_chart(fig, use_container_width=True)
 
   obj_type(DF, obj_type_selector)
 
-app = MultiApp()
-app.add_app("page1", app1)
-app.run
