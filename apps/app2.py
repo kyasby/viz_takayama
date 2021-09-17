@@ -35,7 +35,7 @@ def app():
                         xaxis_tickformat = '%Y-%m-%d',)
       fig.add_vrect(
           x0="2021-08-01", x1="2021-08-06",
-          fillcolor="LightSalmon", opacity=0.5,
+          fillcolor="Red", opacity=0.5,
           layer="below", line_width=0,
       )
       st.plotly_chart(fig, use_container_width=True)

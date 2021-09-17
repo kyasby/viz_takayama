@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.express as px
 from datetime import date
 from multiapp import MultiApp
+import urllib.parse
 
 
 OBJ_TYPE = ["person", "car", "bus", "truck", "bicycle", "motorbike"]
