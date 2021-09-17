@@ -150,7 +150,7 @@ def app():
 
       return df
 
-    @st.cache()
+    @st.cache(suppress_st_warning=True)
     def show_sample(df):
       return st.dataframe(df.head(3))
 
