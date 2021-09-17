@@ -87,14 +87,25 @@ def draw_data(df, params):
   df_add = df[df["countingDirection"]=="leftright_topbottom"]
   # fig.add_trace(go.Scatter(x=df_add["day"], y=df_add["timestamp"], name='your data'))
 
-  fig.update_layout(xaxis_title="日付",
-                    yaxis_title="数",
-                    xaxis_tickformat = '%Y-%m-%d',)
+  fig.update_layout(xaxis_title = "日付",
+                    yaxis_title = "数",
+                    xaxis_tickformat = '%Y-%m-%d'
+  )
+
+  fig.update_layout(legend=dict(x = 0.01,
+                                y = 0.99,
+                                xanchor = 'left',
+                                yanchor = 'top',
+                                orientation = 'h',),
+                    legend_title_text=''
+  )
+
   fig.add_vrect(
       x0="2021-08-01", x1="2021-08-06",
       fillcolor="LightSalmon", opacity=0.5,
       layer="below", line_width=0,
   )
+
   st.plotly_chart(fig, use_container_width=True)
 
 # トレンドのラインを描く
@@ -156,14 +167,14 @@ def draw_trend(place_name, place_df):
     uploaded["trend"] /= uploaded["trend"].max()
 
     place_df["type"] = place_name
-    uploaded["type"] = "uploaded"
+    uploaded["type"] = "アップロードされたデータ"
 
     df = pd.concat([place_df, uploaded], axis=0)
 
     return df
 
   with st.expander("自分のデータをアップロードして，この地点のデータと比べる"):
-    st.markdown('日付と数値を含む`csv`をアップロードすると，通行人のトレンドと比較することができます。\
+    st.markdown('`日付と数値を含むcsv`をアップロードすると，通行人のトレンドと比較することができます。\
                 例えば，通行人の人数が増えている際に，売り上げも増えているか比較することができます。'
     )
 
@@ -179,11 +190,15 @@ def draw_trend(place_name, place_df):
     if uploaded_df is not None:
       df = combine_df(place_df, uploaded_df)
 
-      fig = px.line(df, y="trend", color="type", title="大まかな変化の比較")
+      fig = px.line(df, y="trend", color="type", title=f"大まかな変化の比較({place_name})")
       fig.update_layout(xaxis_title="日付",
                         yaxis_title="増減",
-                        xaxis_tickformat = '%Y-%m-%d',)
-      st.plotly_chart(fig, use_containupler_width=True)
+                        xaxis_tickformat = '%Y-%m-%d'
+      )
+      st.session_state.combined_graph = fig
+    if "combined_graph" in st.session_state:
+      st.plotly_chart(st.session_state.combined_graph, use_container_width=True)
+
 
 def app():
 
@@ -195,4 +210,5 @@ def app():
 
   draw_data(df, params)
   draw_trend(place_name, df)
+
 
