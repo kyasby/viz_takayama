@@ -89,49 +89,70 @@ def app():
     st.plotly_chart(fig, use_container_width=True)
 
 
-  def upload_csv():
-    global count_col
-    global day_col
-    
-    csv = st.file_uploader("ファイルアップロード", type='csv')
-    if csv:
-      df = pd.read_csv(csv)
-      st.table(df.head(3))
-      count_col = st.text_input("比較する値のカラム名を入れてください。", value="timestamp") # todo default
-      day_col   = st.text_input("日付のカラム名を入れてください。", value="date") # todo default
-      if count_col and day_col:
-        df["day"] = pd.to_datetime(df[day_col])
-        return df
+  def draw_trend(original):
 
-
-  def draw_trend(original, uploaded):
-
-    def extract_trend(df, col, period=7):
-      stl=STL(df[col], period=period, robust=True)
-      stl_series = stl.fit()
+    def upload_csv():
+      global count_col
+      global day_col
       
-      return pd.DataFrame(stl_series.trend) 
+      csv = st.file_uploader("ファイルアップロード", type='csv')
+      if csv:
+        df = pd.read_csv(csv)
+        st.table(df.head(3))
+        count_col = st.text_input("比較する値のカラム名を入れてください。", value="timestamp") # todo default
+        day_col   = st.text_input("日付のカラム名を入れてください。", value="date") # todo default
+        if count_col and day_col:
+          df["day"] = pd.to_datetime(df[day_col])
+          return df
 
-    def convert_df(df, day_col="day", dim="D"):
-      df = df.set_index("day")
-      df = df.resample(dim).sum()
-      return df 
 
-    original = convert_df(original)
-    original = extract_trend(original, "timestamp")
-    
-    uploaded = convert_df(uploaded)
-    uploaded = extract_trend(uploaded, count_col)
+    @st.cache()
+    def make_comparing_df(original, uploaded):
 
-    original["trend"] /= original["trend"].max()
-    uploaded["trend"] /= uploaded["trend"].max()
-    original["type"] = "original"
-    uploaded["type"] = "uploaded"
+      @st.cache()
+      def convert_df(df, day_col="day", dim="D"):
+        df = df.set_index("day")
+        df = df.resample(dim).sum()
+        return df 
 
-    df = pd.concat([original, uploaded], axis=0)
+      def extract_trend(df, col, period=7):
+        stl=STL(df[col], period=period, robust=True)
+        stl_series = stl.fit()
+        
+        return pd.DataFrame(stl_series.trend) 
 
-    fig = px.line(df, y="trend", color="type")
-    st.plotly_chart(fig, use_containupler_width=True)
+      original = convert_df(original)
+      original = extract_trend(original, "timestamp")
+      
+      uploaded = convert_df(uploaded)
+      uploaded = extract_trend(uploaded, count_col)
+
+      original["trend"] /= original["trend"].max()
+      uploaded["trend"] /= uploaded["trend"].max()
+
+      original["type"] = "original"
+      uploaded["type"] = "uploaded"
+
+      df = pd.concat([original, uploaded], axis=0)
+
+      return df
+
+    with st.expander("自分のデータと比べる"):
+      # st.markdown('日付と数値を含む`csv`をアップロードすると，通行人のトレンドと比較することができます。\
+      #             \n 日付：`yyyy-mm-dd`の形式にしてください。例：2021-01-29\
+      #             \n 数値：数字のみ入れてください。少数も可能です。')
+      
+      show_csv_sample = st.radio("アップロードするcsvのサンプル",
+                                ('表示', '非表示'), index=1)
+      if show_csv_sample == "表示":
+        st.table(original.head(3))
+
+      uploaded = upload_csv()
+      if uploaded is not None:
+        df = make_comparing_df(original, uploaded)
+
+        fig = px.line(df, y="trend", color="type")
+        st.plotly_chart(fig, use_containupler_width=True)
 
 
 
@@ -140,17 +161,5 @@ def app():
   url, df = load_date(params)
   st.title(urllib.parse.unquote(f'{url.split("/")[-1].split(".")[0].split("_")[-1]}'))
   obj_type(df, params)
-  with st.expander("自分のデータと比べる"):
-    st.markdown("日付と数値を含む`csv`をアップロードすると，通行人のトレンドと比較することができます。\
-                \n 日付：`yyyy-mm-dd`の形式にしてください。例：2021-01-29\
-                \n 数値：数字のみ入れてください。少数も可能です。")
-    
-    show_csv_sample = st.radio("アップロードするcsvのサンプル",
-                              ('表示', '非表示'), index=1)
-    if show_csv_sample == "表示":
-      st.table(df.head(3))
-
-    uploaded = upload_csv()
-    if uploaded is not None:
-      draw_trend(df, uploaded)
+  draw_trend(df)
 
