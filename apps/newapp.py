@@ -159,7 +159,7 @@ def app():
       show_csv_sample = st.radio("アップロードするcsvのサンプル",
                                 ('表示', '非表示'), index=1)
       if show_csv_sample == "表示":
-        st.dataframe(df.head(3))
+        st.dataframe(original.head(3))
 
       uploaded = upload_csv()
       if uploaded is not None:
