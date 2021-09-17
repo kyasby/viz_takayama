@@ -113,8 +113,11 @@ def draw_trend(place_name, place_df):
       st.dataframe(df.head(3))
 
       #　カラム入力
-      count_col = st.text_input("比較する値のカラム名を入れてください。", value="timestamp") # todo default
-      day_col   = st.text_input("日付のカラム名を入れてください。", value="date") # todo default
+      columns = df.columns
+      count_col = st.selectbox("比較する値のカラム名を入れてください。", columns)
+      day_col = st.selectbox("日付のカラム名を入れてください。", columns)
+      # count_col = st.text_input("比較する値のカラム名を入れてください。", value="timestamp") # todo default
+      # day_col   = st.text_input("日付のカラム名を入れてください。", value="date") # todo default
       if count_col and day_col:
         try:
           df["day"] = pd.to_datetime(df[day_col])
@@ -189,7 +192,7 @@ def app():
 
   place_name = urllib.parse.unquote(f'{url.split("/")[-1].split(".")[0].split("_")[-1]}')
   st.title(place_name)
-  
+
   draw_data(df, params)
   draw_trend(place_name, df)
 
