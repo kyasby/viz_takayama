@@ -152,7 +152,7 @@ def app():
 
     @st.cache()
     def show_sample(df):
-        st.dataframe(df.head(3))
+      return st.dataframe(df.head(3))
 
 
     with st.expander("自分のデータと比べる"):
