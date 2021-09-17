@@ -24,7 +24,7 @@ def app():
 
   # set sidebar
   obj_type_selector = st.sidebar.selectbox("Select your aaaaaaafavorite flower", OBJ_TYPE)
-  
+
   def obj_type(df, obj_type_selector):
       df = df[df["name"] == obj_type_selector]
 
@@ -39,6 +39,8 @@ def app():
           layer="below", line_width=0,
       )
       st.plotly_chart(fig, use_container_width=True)
+
+      st.table(df)
 
   obj_type(DF, obj_type_selector)
 

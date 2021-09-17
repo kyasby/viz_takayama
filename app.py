@@ -1,4 +1,4 @@
-from apps import newapp, app2 # import your app modules here
+from apps import newapp, app2
 from multiapp import MultiApp
 
 
