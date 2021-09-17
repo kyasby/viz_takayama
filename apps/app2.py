@@ -23,16 +23,19 @@ def app():
   # set sidebar
   obj_type_selector = st.sidebar.selectbox("Select your aaaaaaafavorite flower", OBJ_TYPE)
 
-
   def obj_type(df, obj_type_selector):
       df = df[df["name"] == obj_type_selector]
-      df = df[(pd.to_datetime(date_start) < df.day) & (df.day  < pd.to_datetime(date_end))]
 
 
       fig = px.line(df, x='day', y="timestamp", color="countingDirection")
       fig.update_layout(xaxis_title="日付",
                         yaxis_title="数",
                         xaxis_tickformat = '%Y-%m-%d',)
+      fig.add_vrect(
+          x0="2021-08-01", x1="2021-08-06",
+          fillcolor="LightSalmon", opacity=0.5,
+          layer="below", line_width=0,
+      )
       st.plotly_chart(fig, use_container_width=True)
 
   obj_type(DF, obj_type_selector)
