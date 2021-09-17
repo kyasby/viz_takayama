@@ -38,7 +38,7 @@ def set_params():
           {"English": ["January", "Feburary","March", "April",
                        "May", "June", "July", "August", "September", "October", "November", "December"],
            "日本語": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]}
-   )
+   ).set_index("日本語")
 
   st.sidebar.table(df) 
 

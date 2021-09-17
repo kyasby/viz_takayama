@@ -39,9 +39,10 @@ class MultiApp:
         })
 
     def run(self):
-        app = st.sidebar.radio(
-            'Go To',
+        app = st.sidebar.selectbox(
+            'ページ選択',
             self.apps,
             format_func=lambda app: app['title'])
+        st.sidebar.markdown("---")
 
         app['function']()
