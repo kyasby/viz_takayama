@@ -37,7 +37,7 @@ def app():
                                value=date(2021, 9, 3),
                                )
 
-  @st.cache()
+  @st.cache(suppress_st_warning=True)
   def obj_type(df, obj_type_selector):
       df = df[df["name"] == obj_type_selector]
       df = df[(pd.to_datetime(date_start) < df.day) & (df.day  < pd.to_datetime(date_end))]
