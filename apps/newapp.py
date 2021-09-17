@@ -20,7 +20,13 @@ def app():
   def set_params():
     # set sidebar
     global obj_type_selector, date_start, date_end, place
+    place = st.sidebar.selectbox("場所を選んでください。", ["マルプ", "16"])
     obj_type_selector = st.sidebar.selectbox("Select your favorite flower", OBJ_TYPE)
+
+    # col1, col2 = st.sidebar.columns(2)#\n May：　5月\n June：　6月
+    # col1.markdown("January：　1月\n Feburary:　2月\n March：　3月\n April：　4月\n May　：　5月\n June：　6月")
+    # col2.markdown("July：　7月\n August：　8月\n September：　9月\n October：　10月\n November：　11月\n December：　12月")
+
 
     date_start = st.sidebar.date_input('開始日',
                                  min_value=date(2021,6,26),
@@ -33,7 +39,14 @@ def app():
                                  max_value=date(2021,9,3),
                                  value=date(2021, 9, 3),
                                  )
-    place = st.sidebar.selectbox("場所を選んでください。", ["マルプ", "16"])
+
+    df = pd.DataFrame(
+            {"English": ["January", "Feburary","March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+             "日本語": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]}
+     )
+
+    st.sidebar.dataframe(df) 
+
 
     params={"obj_type_selector": obj_type_selector,
             "date_start": date_start,
@@ -70,7 +83,7 @@ def app():
     return url, df
 
 
-  def obj_type(df, params):
+  def draw_data(df, params):
 
     fig = px.line(df, x='day', y="timestamp", color="countingDirection")
 
@@ -98,7 +111,8 @@ def app():
       csv = st.file_uploader("ファイルアップロード", type='csv')
       if csv:
         df = pd.read_csv(csv)
-        st.table(df.head(3))
+        st.markdown("アップロードファイルのプレビュー")
+        st.dataframe(df.head(3))
         count_col = st.text_input("比較する値のカラム名を入れてください。", value="timestamp") # todo default
         day_col   = st.text_input("日付のカラム名を入れてください。", value="date") # todo default
         if count_col and day_col:
@@ -109,7 +123,6 @@ def app():
     @st.cache()
     def make_comparing_df(original, uploaded):
 
-      @st.cache()
       def convert_df(df, day_col="day", dim="D"):
         df = df.set_index("day")
         df = df.resample(dim).sum()
@@ -138,20 +151,23 @@ def app():
       return df
 
     with st.expander("自分のデータと比べる"):
-      # st.markdown('日付と数値を含む`csv`をアップロードすると，通行人のトレンドと比較することができます。\
-      #             \n 日付：`yyyy-mm-dd`の形式にしてください。例：2021-01-29\
-      #             \n 数値：数字のみ入れてください。少数も可能です。')
+      st.markdown('日付と数値を含む`csv`をアップロードすると，通行人のトレンドと比較することができます。\
+                  \n 日付：`yyyy-mm-dd`の形式にしてください。例：2021-01-29\
+                  \n 数値：数字のみ入れてください。少数も可能です。')
       
       show_csv_sample = st.radio("アップロードするcsvのサンプル",
                                 ('表示', '非表示'), index=1)
       if show_csv_sample == "表示":
-        st.table(original.head(3))
+        st.dataframe(original.head(3))
 
       uploaded = upload_csv()
       if uploaded is not None:
         df = make_comparing_df(original, uploaded)
 
         fig = px.line(df, y="trend", color="type")
+        fig.update_layout(xaxis_title="日付",
+                          yaxis_title="増減",
+                          xaxis_tickformat = '%Y-%m-%d',)
         st.plotly_chart(fig, use_containupler_width=True)
 
 
@@ -160,6 +176,6 @@ def app():
   params = set_params()
   url, df = load_date(params)
   st.title(urllib.parse.unquote(f'{url.split("/")[-1].split(".")[0].split("_")[-1]}'))
-  obj_type(df, params)
+  draw_data(df, params)
   draw_trend(df)
 
