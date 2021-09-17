@@ -150,10 +150,6 @@ def app():
 
       return df
 
-    @st.cache(suppress_st_warning=True)
-    def show_sample(df):
-      return st.dataframe(df.head(3))
-
 
     with st.expander("自分のデータと比べる"):
       st.markdown('日付と数値を含む`csv`をアップロードすると，通行人のトレンドと比較することができます。\
@@ -163,7 +159,7 @@ def app():
       show_csv_sample = st.radio("アップロードするcsvのサンプル",
                                 ('表示', '非表示'), index=1)
       if show_csv_sample == "表示":
-        show_sample(original)
+        st.dataframe(df.head(3))
 
       uploaded = upload_csv()
       if uploaded is not None:
