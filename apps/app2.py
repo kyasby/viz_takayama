@@ -24,7 +24,7 @@ def app():
 
   # set sidebar
   obj_type_selector = st.sidebar.selectbox("Select your aaaaaaafavorite flower", OBJ_TYPE)
-  @st.cache(suppress_st_warning=True)
+  
   def obj_type(df, obj_type_selector):
       df = df[df["name"] == obj_type_selector]
 
