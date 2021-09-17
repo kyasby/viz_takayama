@@ -5,10 +5,13 @@ import pandas as pd
 import plotly.express as px
 from datetime import date
 from multiapp import MultiApp
+import urllib.parse
+
 
 
 OBJ_TYPE = ["person", "car", "bus", "truck", "bicycle", "motorbike"]
 
+@st.cache()
 def app():
   # load data
   URL = 'https://jetson-extraction.s3.ap-northeast-1.amazonaws.com//day_grouped_by_%E3%81%BE%E3%82%8B%E3%81%A3%E3%81%A8%E3%83%95%E3%82%9A%E3%83%A9%E3%82%B5%E3%82%99.csv'
@@ -17,7 +20,7 @@ def app():
   DF.day = pd.to_datetime(DF.day)
 
 
-  st.title(f'{URL.split("/")[-1].split(".")[0].split("_")[-1]}')
+  st.title(urllib.parse.unquote(f'{URL.split("/")[-1].split(".")[0].split("_")[-1]}'))
 
 
   # set sidebar
