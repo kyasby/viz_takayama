@@ -45,7 +45,7 @@ def app():
              "日本語": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]}
      )
 
-    st.sidebar.dataframe(df) 
+    st.sidebar.table(df) 
 
 
     params={"obj_type_selector": obj_type_selector,
@@ -150,6 +150,11 @@ def app():
 
       return df
 
+    @st.cache()
+    def show_sample(df):
+        st.dataframe(df.head(3))
+
+
     with st.expander("自分のデータと比べる"):
       st.markdown('日付と数値を含む`csv`をアップロードすると，通行人のトレンドと比較することができます。\
                   \n 日付：`yyyy-mm-dd`の形式にしてください。例：2021-01-29\
@@ -158,7 +163,7 @@ def app():
       show_csv_sample = st.radio("アップロードするcsvのサンプル",
                                 ('表示', '非表示'), index=1)
       if show_csv_sample == "表示":
-        st.dataframe(original.head(3))
+        show_sample(original)
 
       uploaded = upload_csv()
       if uploaded is not None:
