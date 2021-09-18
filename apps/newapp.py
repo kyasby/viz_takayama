@@ -58,27 +58,18 @@ def draw_trend(place_name, place_df):
   def combine_df(place_df, uploaded, count_col, day_col):
 
     def convert_df(df, type_name, count_col, day_col="day"):
-  
-      def resample_df(df, day_col="day", dim="D"):
-        df = df.set_index("day")
-        df = df.resample(dim).sum()
-        return df 
+      # resample todo: 不要では？
+      df = df.set_index("day")
+      df = df.resample(dim).sum()
 
-      def extract_trend(df, col, period=7):
-        try:
-          stl=STL(df[col], period=period, robust=True)
-        except KeyError as e:
-          st.error('比較するカラム名を正しく入れてください!')
-        else:
-          stl_series = stl.fit()
-        
-        return pd.DataFrame(stl_series.trend)
-    
-      df = resample_df(df)
-      df = extract_trend(df, count_col)
-
-      df["trend"] /= df["trend"].max()
-      df["type"] = type_name
+      # トレンド抽出
+      try:
+        stl=STL(df[col], period=period, robust=True)
+      except KeyError as e:
+        st.error('比較するカラム名を正しく入れてください!')
+      else:
+        stl_series = stl.fit()
+      return pd.DataFrame(stl_series.trend)
 
     place_df = convert_df(place_df, place_name, "timestamp")
     uploaded = convert_df(uploaded, "アップロードされたデータ", count_col, day_col)
