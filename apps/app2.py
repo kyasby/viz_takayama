@@ -8,7 +8,6 @@ from multiapp import MultiApp
 import urllib.parse
 
 
-
 OBJ_TYPE = ["person", "car", "bus", "truck", "bicycle", "motorbike"]
 
 def app():
