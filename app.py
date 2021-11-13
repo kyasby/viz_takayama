@@ -17,7 +17,7 @@ app.add_app("時間の推移（多い時間を確認する）", time.app)
 # app.add_app("地図", map_viz.app)
 
 
-img = Image.open("/Users/ryo/Desktop/スクリーンショット 2021-09-21 19.17.55.png")
+img = Image.open("./data/zoom.png")
 st.image(img)
 
 # The main app
