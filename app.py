@@ -7,15 +7,6 @@ from multiapp import MultiApp
 
 app = MultiApp()
 
-import os
-import glob
-
-st.title(glob.glob('./data/csv/*'))
-
-print('getcwd:      ', os.getcwd())
-print('__file__:    ', __file__)
-st.title(os.getcwd())
-
 # Add all your application here
 app.add_app('かんたんな概要', summary.app)
 app.add_app("日付の推移(多い日を確認する)", day.app)
