@@ -7,7 +7,11 @@ from multiapp import MultiApp
 
 app = MultiApp()
 
-# st.set_page_config(layout="wide")
+import os
+
+print('getcwd:      ', os.getcwd())
+print('__file__:    ', __file__)
+st.title(oc.getcwd())
 
 # Add all your application here
 app.add_app('かんたんな概要', summary.app)
