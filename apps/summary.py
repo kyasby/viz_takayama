@@ -64,6 +64,8 @@ def app():
 
     fig = px.line(df, x=df.index, y="count", color='data', markers=True,    width=500, height=150,)
     fig.update_layout(
+        xaxis_title="曜日",
+        yaxis_title="通行人",
         margin=dict(l=0, r=0, t=0, b=0),
         legend=dict(orientation="h",
                     yanchor="bottom",
@@ -73,6 +75,7 @@ def app():
     config = {'staticPlot': True}
 
     col5.plotly_chart(fig, use_container_width=True, **{'config': config})
+    st.markdown('＊グラフの横軸を，月，火，などとしたい。')
 
 
 
@@ -121,6 +124,8 @@ def app():
     fig = px.line(df, x=df.index, y="count", markers=True,    width=500, height=150,)
 
     fig.update_layout(
+        xaxis_title="時刻",
+        yaxis_title="通行人",
         margin=dict(l=0, r=0, t=0, b=0),
         legend=dict(orientation="h",
                     yanchor="bottom",
