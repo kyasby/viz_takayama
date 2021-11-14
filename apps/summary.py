@@ -32,7 +32,7 @@ def app():
             padding-top: {1}rem;
             padding-right: {1}rem;
             padding-left: {1}rem;
-            padding-bottom: {1}rem;
+            padding-bottom: {10}rem;
         }}
     </style>
     """,
