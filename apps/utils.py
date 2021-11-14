@@ -31,18 +31,18 @@ def load_date(dim_type, params):
 
     if dim_type == "day":
         if params["place"] == "まるっとプラザ":
-            url = "./data/csv/day_grouped_by_まるっとプラザ.csv"
+            url = "./data/csv/day_grouped_by_plaza.csv"
             area = "plaza_car_near"
         else:
-            url = "./data/csv/day_grouped_by_望遠.csv"
+            url = "./data/csv/day_grouped_by_zoom.csv"
             area = "juroku_zoom"
     elif dim_type == "week":
         if params["place"] == "まるっとプラザ":
-            url = "./data/csv/week_grouped_by_まるっとプラザ.csv"
+            url = "./data/csv/week_grouped_by_plaza.csv"
             area = "plaza_car_near"
         else:
             url = (
-                "./data/csv/week_grouped_by_望遠.csv"
+                "./data/csv/week_grouped_by_zoom.csv"
             )
             area = "juroku_zoom"
     elif dim_type == "time":

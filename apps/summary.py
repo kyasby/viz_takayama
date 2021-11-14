@@ -39,9 +39,8 @@ def app():
         unsafe_allow_html=True,
     )
     params = set_params()
-    pic_url, place_name, sss.df_day, hol_edge = load_date("day", params)
 
-    st.title(f'{place_name}の分析の概要') 
+    st.title(f'{params['place']}の分析の概要') 
     st.write('このページは作成中なので，見た目しかありません。実際のデータとは連動していません。')
     a=11340
 
