@@ -2,23 +2,23 @@ import streamlit as st
 import streamlit.components.v1 as components
 from PIL import Image
 
-from apps import day, time, week
+from apps import day, time, week, summary, summary_graph
 from multiapp import MultiApp
 
 app = MultiApp()
 
-st.set_page_config(layout="wide")
+# st.set_page_config(layout="wide")
 
 # Add all your application here
+app.add_app('かんたんな概要', summary.app)
 app.add_app("日付の推移(多い日を確認する)", day.app)
 app.add_app("曜日の推移（多い曜日を確認する）", week.app)
 app.add_app("時間の推移（多い時間を確認する）", time.app)
 
-# app.add_app("地図", map_viz.app)
 
-
-img = Image.open("./data/zoom.png")
-st.image(img)
+#  タイトル画像
+# img = Image.open("./data/zoom.png")
+# st.image(img)
 
 # The main app
 app.run()

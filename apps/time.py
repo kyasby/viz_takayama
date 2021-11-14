@@ -171,7 +171,7 @@ def app():
     params = set_params()
     pic_url, place_name, sss.df_day, hol_edge = load_date("time", params)
 
-    st.title(place_name)
+    st.title(params['place'])
     image = Image.open(pic_url)
     st.image(image, caption=place_name)
 

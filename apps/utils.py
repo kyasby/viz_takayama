@@ -11,13 +11,13 @@ from statsmodels.tsa.seasonal import STL
 OBJ_TYPE = ["person", "car", "bus", "truck", "bicycle", "motorbike"]
 
 
-def show_title(url):
-    place_name = urllib.parse.unquote(
-        f'{url.split("/")[-1].split(".")[0].split("_")[-1]}'
-    )
-    st.title(place_name)
+# def show_title(url):
+#     place_name = urllib.parse.unquote(
+#         f'{url.split("/")[-1].split(".")[0].split("_")[-1]}'
+#     )
+#     st.title(place_name)
 
-    return place_name
+#     return place_name
 
 
 # 後から綺麗にする
@@ -25,32 +25,32 @@ def show_title(url):
 def load_date(dim_type, params):
 
     if params["place"] == "まるっとプラザ":
-        pic_url = "/Users/ryo/Documents/Picture/高山/マルっと.png"
+        pic_url = "./data/pic/marutto.png"
     else:
-        pic_url = "./data/zoom.png"
+        pic_url = "./data/pic/zoom.png"
 
     if dim_type == "day":
         if params["place"] == "まるっとプラザ":
-            url = "https://publickbacketmdg.s3.ap-northeast-1.amazonaws.com/day_grouped_by_%E3%81%BE%E3%82%8B%E3%81%A3%E3%81%A8%E3%83%97%E3%83%A9%E3%82%B6.csv"
+            url = "./data/csv/day_grouped_by_まるっとプラザ.csv"
             area = "plaza_car_near"
         else:
-            url = "https://publickbacketmdg.s3.ap-northeast-1.amazonaws.com/day_grouped_by_%E6%9C%9B%E9%81%A0.csv"
+            url = "./data/csv/day_grouped_by_望遠.csv"
             area = "juroku_zoom"
     elif dim_type == "week":
         if params["place"] == "まるっとプラザ":
-            url = "/Users/ryo/Documents/Lab/Jetson/jetson_csv/9-3/week_grouped_by_まるっとプラザ.csv"
+            url = "./data/csv/week_grouped_by_まるっとプラザ.csv"
             area = "plaza_car_near"
         else:
             url = (
-                "/Users/ryo/Documents/Lab/Jetson/jetson_csv/9-3/week_grouped_by_望遠.csv"
+                "./data/csv/week_grouped_by_望遠.csv"
             )
             area = "juroku_zoom"
     elif dim_type == "time":
         if params["place"] == "まるっとプラザ":
-            url = "/Users/ryo/Documents/Lab/Jetson/jetson_csv/10-21/time/plaza.csv"
+            url = "./data/csv/plaza.csv"
             area = "plaza_right_far"
         else:
-            url = "/Users/ryo/Documents/Lab/Jetson/jetson_csv/10-21/time/zoom.csv"
+            url = "./data/csv/zoom.csv"
             area = "juroku_zoom"
 
     df = pd.read_csv(url)
@@ -100,7 +100,7 @@ def set_params(is_map=False):
     else:
         place = st.sidebar.selectbox("場所を選んでください。", ["まるっとプラザ", "十六銀行高山支店"])
 
-    obj_type_selector = st.sidebar.selectbox("Select your favorite flower", OBJ_TYPE)
+    obj_type_selector = 'person' #st.sidebar.selectbox("Select your favorite flower", OBJ_TYPE)
 
     date_start = st.sidebar.date_input(
         "開始日",

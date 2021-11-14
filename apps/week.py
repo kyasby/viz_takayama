@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 from PIL import Image
 from statsmodels.tsa.seasonal import STL
 
-from apps.utils import combine_df, load_date, set_params, show_title, upload_csv
+from apps.utils import combine_df, load_date, set_params, upload_csv
 
 OBJ_TYPE = ["person", "car", "bus", "truck", "bicycle", "motorbike"]
 
@@ -88,8 +88,7 @@ def draw_comparison(place_name, place_df):
 def app():
     params = set_params()
     pic_url, place_name, sss.df_week, hol_edge = load_date("week", params)
-
-    st.title(place_name)
+    st.title(params['place'])
     image = Image.open(pic_url)
     st.image(image, caption=place_name)
     draw_date(sss.df_week)
