@@ -11,7 +11,7 @@ import os
 
 print('getcwd:      ', os.getcwd())
 print('__file__:    ', __file__)
-st.title(oc.getcwd())
+st.title(o.getcwd())
 
 # Add all your application here
 app.add_app('かんたんな概要', summary.app)
