@@ -8,6 +8,9 @@ from multiapp import MultiApp
 app = MultiApp()
 
 import os
+import glob
+
+st.title(glob.glob(./*))
 
 print('getcwd:      ', os.getcwd())
 print('__file__:    ', __file__)

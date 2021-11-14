@@ -25,32 +25,32 @@ OBJ_TYPE = ["person", "car", "bus", "truck", "bicycle", "motorbike"]
 def load_date(dim_type, params):
 
     if params["place"] == "まるっとプラザ":
-        pic_url = "./data/pic/marutto.png"
+        pic_url = "/app/viz_takayama/data/pic/marutto.png"
     else:
-        pic_url = "./data/pic/zoom.png"
+        pic_url = "/app/viz_takayama/data/pic/zoom.png"
 
     if dim_type == "day":
         if params["place"] == "まるっとプラザ":
-            url = "./data/csv/day_grouped_by_まるっとプラザ.csv"
+            url = "/app/viz_takayama/data/csv/day_grouped_by_まるっとプラザ.csv"
             area = "plaza_car_near"
         else:
             url = "./data/csv/day_grouped_by_望遠.csv"
             area = "juroku_zoom"
     elif dim_type == "week":
         if params["place"] == "まるっとプラザ":
-            url = "./data/csv/week_grouped_by_まるっとプラザ.csv"
+            url = "/app/viz_takayama/data/csv/week_grouped_by_まるっとプラザ.csv"
             area = "plaza_car_near"
         else:
             url = (
-                "./data/csv/week_grouped_by_望遠.csv"
+                "/app/viz_takayama/data/csv/week_grouped_by_望遠.csv"
             )
             area = "juroku_zoom"
     elif dim_type == "time":
         if params["place"] == "まるっとプラザ":
-            url = "./data/csv/plaza.csv"
+            url = "/app/viz_takayama/data/csv/plaza.csv"
             area = "plaza_right_far"
         else:
-            url = "./data/csv/zoom.csv"
+            url = "/app/viz_takayama/data/csv/zoom.csv"
             area = "juroku_zoom"
 
     df = pd.read_csv(url)
