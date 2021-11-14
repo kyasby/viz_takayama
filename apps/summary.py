@@ -40,7 +40,7 @@ def app():
     )
     params = set_params()
 
-    st.title(f'{params['place']}の分析の概要') 
+    st.title(f'{params["place"]}の分析の概要') 
     st.write('このページは作成中なので，見た目しかありません。実際のデータとは連動していません。')
     a=11340
 
