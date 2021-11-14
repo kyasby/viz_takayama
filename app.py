@@ -10,7 +10,7 @@ app = MultiApp()
 import os
 import glob
 
-st.title(glob.glob('./data/pic/*'))
+st.title(glob.glob('./data/csv/*'))
 
 print('getcwd:      ', os.getcwd())
 print('__file__:    ', __file__)
