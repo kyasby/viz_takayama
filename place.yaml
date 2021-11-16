@@ -1,0 +1,17 @@
+まるっとプラザ:
+  url:
+    day: ./data/csv/day_grouped_by_plaza.csv
+    week: ./data/csv/week_grouped_by_plaza.csv
+    time: ./data/csv/plaza.csv
+    pic: ./data/pic/marutto.png
+  area:
+    - plaza_right_far
+    - plaza_left_far
+十六銀行高山支店:
+  url:
+    day: ./data/csv/day_grouped_by_zoom.csv
+    week: ./data/csv/week_grouped_by_zoom.csv
+    time: ./data/csv/zoom.csv
+    pic: ./data/pic/zoom.png
+  area:
+    - juroku_zoom

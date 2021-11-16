@@ -6,65 +6,38 @@ import pandas
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+import yaml
 from statsmodels.tsa.seasonal import STL
 
 OBJ_TYPE = ["person", "car", "bus", "truck", "bicycle", "motorbike"]
-
-
-# def show_title(url):
-#     place_name = urllib.parse.unquote(
-#         f'{url.split("/")[-1].split(".")[0].split("_")[-1]}'
-#     )
-#     st.title(place_name)
-
-#     return place_name
-
 
 # 後から綺麗にする
 # @st.experimental_memo
 def load_date(dim_type, params):
 
-    if params["place"] == "まるっとプラザ":
-        pic_url = "./data/pic/marutto.png"
-    else:
-        pic_url = "./data/pic/zoom.png"
+    with open("place.yaml") as f:
+        obj = yaml.safe_load(f)
 
-    if dim_type == "day":
-        if params["place"] == "まるっとプラザ":
-            url = "./data/csv/day_grouped_by_plaza.csv"
-            area = "plaza_car_near"
-        else:
-            url = "./data/csv/day_grouped_by_zoom.csv"
-            area = "juroku_zoom"
-    elif dim_type == "week":
-        if params["place"] == "まるっとプラザ":
-            url = "./data/csv/week_grouped_by_plaza.csv"
-            area = "plaza_car_near"
-        else:
-            url = (
-                "./data/csv/week_grouped_by_zoom.csv"
-            )
-            area = "juroku_zoom"
-    elif dim_type == "time":
-        if params["place"] == "まるっとプラザ":
-            url = "./data/csv/plaza.csv"
-            area = "plaza_right_far"
-        else:
-            url = "./data/csv/zoom.csv"
-            area = "juroku_zoom"
+    place_obj = obj[params["place"]]
+    pic_url = place_obj["url"]["pic"]
+    url = place_obj["url"][dim_type]
+    areas = place_obj["area"]
 
     df = pd.read_csv(url)
 
     # カウント線を絞る TODO
-    df = df[df["area"] == area]
+    # df = df[df["area"] == area]
+    df = df[df["area"].isin(areas)]
+
     # 種類を絞る
     df = df[df["name"] == params["obj_type_selector"]]
+
     hol_edge = None
     if dim_type == "day":
         df.day = pd.to_datetime(df.day)
 
         df = (
-            df.groupby(["day", "name", "area", "week", "is_holiday", "is_edge_holiday"])
+            df.groupby(["day", "name", "week",])
             .sum()
             .reset_index()
         )
@@ -77,12 +50,17 @@ def load_date(dim_type, params):
         # 休日の前後リスト
         hol_edge = df[df["is_edge_holiday"] == 1]["day"]
         hol_edge = sorted(hol_edge.unique())
-    elif dim_type == 'week':
-        df = df.groupby(['week', 'area', 'name']).mean().reset_index()
-        
+
+        df["week"] = df["week"].replace(
+            {0: "月曜", 1: "火曜", 2: "水曜", 3: "木曜", 4: "金曜", 5: "土曜", 6: "日曜"}
+        )
+
+    elif dim_type == "week":
+        df = df.groupby(["week", "area", "name"]).mean().reset_index()
+
     elif dim_type == "time":
         df = df.groupby(["is_holiday", "time"]).mean().reset_index()
-        df['is_holiday'] = df['is_holiday'].apply(lambda x: '休日' if x else '平日')
+        df["is_holiday"] = df["is_holiday"].apply(lambda x: "休日" if x else "平日")
 
     return (
         pic_url,
@@ -100,7 +78,9 @@ def set_params(is_map=False):
     else:
         place = st.sidebar.selectbox("場所を選んでください。", ["まるっとプラザ", "十六銀行高山支店"])
 
-    obj_type_selector = 'person' #st.sidebar.selectbox("Select your favorite flower", OBJ_TYPE)
+    obj_type_selector = (
+        "person"  # st.sidebar.selectbox("Select your favorite flower", OBJ_TYPE)
+    )
 
     date_start = st.sidebar.date_input(
         "開始日",

@@ -125,13 +125,13 @@ def comp_input_trend(place_name, place_df, params):
 
         sss.input_dict = {}
         for d in range(8):
-            sss.input_dict[d] = col1.text_input(str(d)+"時", key=d)
+            sss.input_dict[d] = col1.text_input(str(d) + "時", key=d)
 
         for d in range(8, 16):
-            sss.input_dict[d] = col2.text_input(str(d)+"時", key=d)
+            sss.input_dict[d] = col2.text_input(str(d) + "時", key=d)
 
-        for d in range(16,24):
-            sss.input_dict[d] = col3.text_input(str(d)+"時", key=d)
+        for d in range(16, 24):
+            sss.input_dict[d] = col3.text_input(str(d) + "時", key=d)
 
         # 数字以外が入った時対策
         for k, v in sss.input_dict.items():
@@ -142,7 +142,7 @@ def comp_input_trend(place_name, place_df, params):
                     st.error(f"{k}時に変な値が入っています。数字を入力してね")
                 except Exception as e:
                     st.error(f"予期せぬエラーです。ページを再読み込みしてみてください。{e}")
-            sss.input_dict[k] = 10 # for debug
+            sss.input_dict[k] = 10  # for debug
 
         if st.button("比較する"):
             for k, v in sss.input_dict.items():
@@ -152,16 +152,18 @@ def comp_input_trend(place_name, place_df, params):
                     st.error(f"{k}に値が入っていないよ！")
                     st.stop()
 
-            df = pd.DataFrame(sss.input_dict, index=["timestamp"]).T.reset_index().rename(columns={"index": "time"})
+            df = (
+                pd.DataFrame(sss.input_dict, index=["timestamp"])
+                .T.reset_index()
+                .rename(columns={"index": "time"})
+            )
             df["is_holiday"] = "uploaded_data"
 
-                    
             df_combi_df_day = combine_df(
                 "time", place_name, place_df, df, "timestamp", "index", False
             )
-            
-            df_combi_df_day = df_combi_df_day.reset_index()
 
+            df_combi_df_day = df_combi_df_day.reset_index()
 
             fig = draw_data(df_combi_df_day, "is_holiday")
             st.plotly_chart(fig, use_container_width=True)
@@ -171,7 +173,7 @@ def app():
     params = set_params()
     pic_url, place_name, sss.df_day, hol_edge = load_date("time", params)
 
-    st.title(params['place'])
+    st.title(params["place"])
     image = Image.open(pic_url)
     st.image(image, caption=place_name)
 

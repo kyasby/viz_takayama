@@ -21,8 +21,16 @@ def draw_date(df):
         df,
         x="week",
         y="timestamp",
-        color='week',
-        color_discrete_sequence=["#EF553B", "#EF553B", "#636EFA", "#636EFA", "#636EFA", "#636EFA", "#636EFA"],
+        color="week",
+        color_discrete_sequence=[
+            "#EF553B",
+            "#EF553B",
+            "#636EFA",
+            "#636EFA",
+            "#636EFA",
+            "#636EFA",
+            "#636EFA",
+        ],
     )
 
     fig.update_layout(
@@ -88,7 +96,7 @@ def draw_comparison(place_name, place_df):
 def app():
     params = set_params()
     pic_url, place_name, sss.df_week, hol_edge = load_date("week", params)
-    st.title(params['place'])
+    st.title(params["place"])
     image = Image.open(pic_url)
     st.image(image, caption=place_name)
     draw_date(sss.df_week)
