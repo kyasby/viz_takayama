@@ -22,7 +22,7 @@ app.add_app("時間の推移（多い時間を確認する）", time.app)
 app.run()
 
 
-mongoexport --port 27017 --db opendatacam --collection recordings --type csv --out /data/db/rec.csv  \
+# mongoexport --port 27017 --db opendatacam --collection recordings --type csv --out /data/db/rec.csv  \
 # --query '{"timestamp": {"$gte":{"$date": "2021-09-17T00:00:00.000Z"}}, "timestamp": {"$lte": {"$date": "2021-09-22T00:00:00.000Z"}}}'
 # --query '{"timestamp": {"$gte":{"$date": "2021-09-27T20:00:00.000Z"}}, "timestamp": {"$lte": {"$date": "2021-09-28T08:00:00.000Z"}}}'
 
