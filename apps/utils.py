@@ -26,7 +26,6 @@ def load_date(dim_type, params):
     df = pd.read_csv(url)
 
     # カウント線を絞る TODO
-    # df = df[df["area"] == area]
     df = df[df["area"].isin(areas)]
 
     # 種類を絞る
@@ -56,7 +55,11 @@ def load_date(dim_type, params):
         )
 
     elif dim_type == "week":
-        df = df.groupby(["week", "area", "name"]).mean().reset_index()
+        df = df.groupby(["week", "name"]).mean().reset_index()
+        l_order = ["日曜", "月曜", "火曜", "水曜", "木曜", "金曜", "土曜"]
+
+        df['order'] = df['week'].apply(lambda x: l_order.index(x) if x in l_order else -1)
+        df = df.sort_values(by="order")
 
     elif dim_type == "time":
         df = df.groupby(["is_holiday", "time"]).mean().reset_index()

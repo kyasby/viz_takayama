@@ -24,24 +24,28 @@ def draw_date(df):
         color="week",
         color_discrete_sequence=[
             "#EF553B",
+            "#636EFA",
+            "#636EFA",
+            "#636EFA",
+            "#636EFA",
+            "#636EFA",
             "#EF553B",
-            "#636EFA",
-            "#636EFA",
-            "#636EFA",
-            "#636EFA",
-            "#636EFA",
         ],
     )
 
     fig.update_layout(
+        xaxis_title="曜日",
+        yaxis_title="通行人数",
         legend=dict(
             x=0.002,
-            y=0.998,
+            y=0.999,
             xanchor="left",
             yanchor="top",
             orientation="h",
         ),
+        font=dict(size=18),
         legend_title_text="",
+        yaxis={"range": (0, df["timestamp"].max() * 1.3)}
     )
 
     st.plotly_chart(fig, use_container_width=True)
@@ -98,7 +102,7 @@ def app():
     pic_url, place_name, sss.df_week, hol_edge = load_date("week", params)
     st.title(params["place"])
     image = Image.open(pic_url)
-    st.image(image, caption=place_name)
+    st.image(image, caption=params["place"])
     draw_date(sss.df_week)
     draw_comparison(place_name, sss.df_week)
 

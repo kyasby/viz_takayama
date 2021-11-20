@@ -175,7 +175,7 @@ def app():
 
     st.title(params["place"])
     image = Image.open(pic_url)
-    st.image(image, caption=place_name)
+    st.image(image, caption=params["place"])
 
     fig = draw_data(sss.df_day, "is_holiday")
     st.plotly_chart(fig, use_container_width=True)

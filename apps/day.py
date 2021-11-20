@@ -162,7 +162,7 @@ def comp_input_trend(place_name, place_df, params):
                     st.error(f"{k}に変な値が入っています。数字を入力してね")
                 except Exception as e:
                     st.error(f"予期せぬエラーです。ページを再読み込みしてみてください。{e}")
-            sss.input_dict[k] = 10
+            # sss.input_dict[k] = 10
 
         if st.button("比較する"):
             for k, v in sss.input_dict.items():
@@ -204,11 +204,9 @@ def app():
     params = set_params()
     pic_url, place_name, sss.df_day, hol_edge = load_date("day", params)
 
-    st.write(sss.df_day)
-
     st.title(params["place"])
     image = Image.open(pic_url)
-    st.image(image, caption=place_name)
+    st.image(image, caption=params["place"])
 
     fig = draw_data(sss.df_day, hol_edge, "countingDirection")
     st.plotly_chart(fig, use_container_width=True)

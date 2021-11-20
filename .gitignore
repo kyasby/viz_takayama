@@ -1,1 +1,5 @@
+.DS*
 csv/*
+*pych*
+apps/*__*
+*ipynb

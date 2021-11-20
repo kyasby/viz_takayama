@@ -92,7 +92,7 @@ def week(df):
     col1.markdown(my_mkdwn("1位", f"{first['week']}日",  f"{first['percentage']*100:.1f}%"))
     col2.markdown(my_mkdwn("2位", f"{second['week']}日", f"{second['percentage']*100:.1f}%"))
     col3.markdown(my_mkdwn("3位", f"{third['week']}日",  f"{third['percentage']*100:.1f}%"))
-    col4.markdown(my_mkdwn("合計", f"合計",  f"{three_sum['percentage']*100:.1f}%"))
+    col4.markdown(my_mkdwn("1~3位合計", f"合計",  f"{three_sum['percentage']*100:.1f}%"))
 
     fig = week_graph(df)
     col5.plotly_chart(fig, use_container_width=True, **{"config": config})
@@ -140,12 +140,13 @@ def time(df):
     three_sum = df_sorted.iloc[-3:].sum()
 
     st.markdown("## 人が多い時刻")
-    col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 2])
+    col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 3])
 
-    col1.markdown(my_mkdwn("1位", f"{first['time']}時",  f"{first['percentage'] *100:.1f}%"))
-    col2.markdown(my_mkdwn("2位", f"{second['time']}時", f"{second['percentage']*100:.1f}%"))
-    col3.markdown(my_mkdwn("3位", f"{third['time']}時",  f"{third['percentage'] *100:.1f}%"))
-    col4.markdown(my_mkdwn("合計", f"合計",  f"{three_sum['percentage'] *100:.1f}%"))
+    col1.markdown(my_mkdwn("1位", f"{int(first['time'])}時",  f"{first['percentage'] *100:.1f}%"))
+    col2.markdown(my_mkdwn("2位", f"{int(second['time'])}時", f"{second['percentage']*100:.1f}%"))
+    col3.markdown(my_mkdwn("3位", f"{int(third['time'])}時",  f"{third['percentage'] *100:.1f}%"))
+    col4.markdown(my_mkdwn("1~3位合計", f"合計",  f"{three_sum['percentage'] *100:.1f}%"))
+
 
     fig = time_graph(df)
     col5.plotly_chart(fig, use_container_width=True, **{"config": config})
