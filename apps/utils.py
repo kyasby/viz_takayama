@@ -46,8 +46,6 @@ def load_date(dim_type, params, two_weeks=False):
                 & (df.day <= pd.to_datetime(params["date_end"]))
                 ]
 
-    st.table(df.head())
-    st.table(df.tail())
     if dim_type == "day":
         df = df[["day", "name", "count", "is_edge_holiday", "week"]] # weekもsummary用に必要
         df = (
