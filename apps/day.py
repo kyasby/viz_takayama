@@ -9,6 +9,7 @@ import plotly.express as px
 import streamlit.components.v1 as components
 from PIL import Image
 
+from apps.global_var import CONFIG
 from apps.utils import combine_df, load_date, set_params, upload_csv
 
 
@@ -16,12 +17,13 @@ from apps.utils import combine_df, load_date, set_params, upload_csv
 @st.experimental_memo
 def draw_data(df, hol_edge, color):
 
-    fig = px.line(df, x="day", y="timestamp", markers=True)
+    fig = px.line(df, x="day", y="count", markers=True)
 
     fig.update_layout(
         xaxis_title="日付",
         yaxis_title="数",
         xaxis_tickformat="%Y-%m-%d",
+        yaxis_tickformat=",.0f",
         legend=dict(
             x=0.01,
             y=0.99,
@@ -29,7 +31,45 @@ def draw_data(df, hol_edge, color):
             yanchor="top",
             orientation="h",
         ),
-        yaxis={"range": (df["timestamp"].min() * 0.1, df["timestamp"].max() * 1.1)},
+        yaxis={"range": (df["count"].min() * 0.1, df["count"].max() * 1.1)},
+        # ),
+        legend_title_text="",
+    )
+    fig.update_layout(template="seaborn")  # 白背景のテーマに変更
+
+    if hol_edge:
+        # 休日に背景色
+        it = iter(hol_edge)
+        for start, end in zip(it, it):
+            fig.add_vrect(
+                x0=str(start)[:10],
+                x1=str(end)[:10],
+                fillcolor="red",
+                opacity=0.2,
+                layer="below",
+                line_width=0,
+            )
+    return fig
+
+# 選択場所のグラフを描く
+@st.experimental_memo
+def compare_draw_data(df, hol_edge, color):
+
+    fig = px.line(df, x="day", y="count", color="type", markers=True)
+
+    fig.update_layout(
+        xaxis_title="日付",
+        yaxis_title="数",
+        xaxis_tickformat="%Y-%m-%d",
+        yaxis_tickformat=",.0f",
+        legend=dict(
+            x=0.01,
+            y=0.99,
+            xanchor="left",
+            yanchor="top",
+            orientation="h",
+        ),
+        yaxis={"range": (df["count"].min() * 0.1, df["count"].max() * 1.1)},
         # ),
         legend_title_text="",
     )
@@ -50,6 +90,8 @@ def draw_data(df, hol_edge, color):
     return fig
 
 
+
+
 @st.experimental_memo
 def draw_trend(df, place_name):
     fig = px.line(
@@ -62,6 +104,7 @@ def draw_trend(df, place_name):
         xaxis_title="日付",
         yaxis_title="増減",
         xaxis_tickformat="%Y-%m-%d",
+        yaxis_tickformat=",.0f",
         legend=dict(
             x=0.01,
             y=0.99,
@@ -81,7 +124,7 @@ def draw_trend(df, place_name):
 
 
 # トレンドのグラフを描く(csvデータ)
-def comp_csv_trend(place_name, place_df):
+def comp_csv_trend(place_df, params):
 
     with st.expander("自分のデータをアップロードして，この地点のデータと比べる"):
         st.markdown(
@@ -101,10 +144,17 @@ def comp_csv_trend(place_name, place_df):
         if show_csv_sample == "表示":
             st.dataframe(place_df.head(3))
 
+        date_start = place_df.iloc[0]["day"]
+        date_end = place_df.iloc[-1]["day"]
+
         [*tmp] = upload_csv("day")
 
         if len(tmp) == 3:
             sss.uploaded_df_day, sss.count_col, sss.day_col = tmp
+
+            sss.uploaded_df_day = sss.uploaded_df_day[(pd.to_datetime(date_start) <= sss.uploaded_df_day[sss.day_col])
+                & (sss.uploaded_df_day[sss.day_col] <= pd.to_datetime(date_end))
+                ]  
 
         if "day_col" in sss:
 
@@ -114,7 +164,7 @@ def comp_csv_trend(place_name, place_df):
 
             sss.df_combi_df_day = combine_df(
                 "day",
-                place_name,
+                params["place"],
                 place_df,
                 sss.uploaded_df_day,
                 sss.count_col,
@@ -122,13 +172,13 @@ def comp_csv_trend(place_name, place_df):
                 True,
             )
 
-            sss.combined_graph_day = draw_trend(sss.df_combi_df_day, place_name)
+            sss.combined_graph_day = draw_trend(sss.df_combi_df_day, params["place"])
         if "combined_graph_day" in sss:
             st.plotly_chart(sss.combined_graph_day)
 
 
 # トレンドのグラフを描く(inputデータ)
-def comp_input_trend(place_name, place_df, params):
+def comp_input_trend(place_df, params):
     with st.expander("データを入力して，この地点のデータと比べる"):
 
         st.markdown("日付に対応する数字を入れてください。")
@@ -173,31 +223,33 @@ def comp_input_trend(place_name, place_df, params):
                     st.stop()
 
             df = (
-                pd.DataFrame(sss.input_dict, index=["timestamp"])
+                pd.DataFrame(sss.input_dict, index=["count"])
                 .T.reset_index()
                 .rename(columns={"index": "day"})
             )
 
-            # 10以上なら，トレンド抽出する
-            if len(sss.input_dict) >= 10:
+            # 25以上なら，トレンド抽出する
+            if len(sss.input_dict) >= 25:
                 df_combi_df_day = combine_df(
-                    "day", place_name, place_df, df, "timestamp", "day", True
+                    "day", params["place"], place_df, df, "count", "day", True
                 )
-                sss.combined_graph_day = draw_trend(df_combi_df_day, place_name)
+                sss.combined_graph_day = draw_trend(df_combi_df_day, params["place"])
                 if "combined_graph_day" in sss:
                     st.plotly_chart(sss.combined_graph_day)
 
-            # データが10未満なら，そのまま表示する
+            # データが25未満なら，そのまま表示する
             else:
-                hol_edge = place_df[place_df["is_edge_holiday"] == 1]["day"]
+                hol_edge = place_df[place_df["is_edge_holiday"] >= 1]["day"]
+                hol_edge = sorted(hol_edge.unique())
+                    
                 df_combi_df_day = combine_df(
-                    "day", place_name, place_df, df, "timestamp", "day", False
+                    "day", params["place"], place_df, df, "count", "day", False
                 )
                 df_combi_df_day = df_combi_df_day.reset_index().rename(
                     columns={"index": "day"}
                 )
-                fig = draw_data(df_combi_df_day, hol_edge, "type")
-                st.plotly_chart(fig, use_container_width=True)
+                fig = compare_draw_data(df_combi_df_day, hol_edge, "type")
+                st.plotly_chart(fig, use_container_width=True, **{"config": CONFIG})
 
 
 def app():
@@ -209,7 +261,7 @@ def app():
     st.image(image, caption=params["place"])
 
     fig = draw_data(sss.df_day, hol_edge, "countingDirection")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True)#, **{"config": CONFIG})
 
-    comp_input_trend(place_name, sss.df_day, params)
-    comp_csv_trend(place_name, sss.df_day)
+    comp_input_trend(sss.df_day, params)
+    comp_csv_trend(sss.df_day, params)

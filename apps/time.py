@@ -8,7 +8,9 @@ import pandas as pd
 import plotly.express as px
 import streamlit.components.v1 as components
 from PIL import Image
+from jp_holiday import jp_holiday
 
+from apps.global_var import CONFIG
 from apps.utils import combine_df, load_date, set_params, upload_csv
 
 
@@ -16,7 +18,7 @@ from apps.utils import combine_df, load_date, set_params, upload_csv
 @st.experimental_memo
 def draw_data(df, color):
 
-    fig = px.line(df, x="time", y="timestamp", color=color, markers=True)
+    fig = px.line(df, x="time", y="count", color=color, markers=True)
 
     fig.update_layout(
         xaxis_title="時刻",
@@ -28,7 +30,7 @@ def draw_data(df, color):
             yanchor="top",
             orientation="h",
         ),
-        yaxis={"range": (df["timestamp"].min() * 0.1, df["timestamp"].max() * 1.1)},
+        yaxis={"range": (df["count"].min() * 0.1, df["count"].max() * 1.1)},
         # ),
         legend_title_text="",
     )
@@ -41,14 +43,14 @@ def draw_data(df, color):
 def draw_trend(df, place_name):
     fig = px.line(
         df,
-        y="trend",
+        y="count",
         color="type",
         title=f"大まかな変化の比較({place_name})",
     )
     fig.update_layout(
         xaxis_title="日付",
         yaxis_title="増減",
-        xaxis_tickformat="%Y-%m-%d",
+        # xaxis_tickformat="%Y-%m-%d",
         legend=dict(
             x=0.01,
             y=0.99,
@@ -59,8 +61,8 @@ def draw_trend(df, place_name):
         legend_title_text="",
         yaxis={
             "range": (
-                df["trend"].min() * 0.1,
-                df["trend"].max() * 1.1,
+                df["count"].min() * 0.1,
+                df["count"].max() * 1.1,
             )
         },
     )
@@ -98,8 +100,10 @@ def comp_csv_trend(place_name, place_df):
             st.markdown("アップロードファイルのプレビュー")
             st.dataframe(sss.uploaded_df_day.head(3))
 
+            sss.uploaded_df_day = jp_holiday.is_holiday(sss.uploaded_df_day, sss.day_col, "is_holiday")
+
             sss.df_combi_df_day = combine_df(
-                "day",
+                "time",
                 place_name,
                 place_df,
                 sss.uploaded_df_day,
@@ -114,7 +118,7 @@ def comp_csv_trend(place_name, place_df):
 
 
 # トレンドのグラフを描く(inputデータ)
-def comp_input_trend(place_name, place_df, params):
+def comp_input_trend(place_df, params):
     with st.expander("データを入力して，この地点のデータと比べる"):
 
         st.markdown("日付に対応する数字を入れてください。")
@@ -153,20 +157,20 @@ def comp_input_trend(place_name, place_df, params):
                     st.stop()
 
             df = (
-                pd.DataFrame(sss.input_dict, index=["timestamp"])
+                pd.DataFrame(sss.input_dict, index=["count"])
                 .T.reset_index()
                 .rename(columns={"index": "time"})
             )
-            df["is_holiday"] = "uploaded_data"
+            df["is_holiday_x"] = "uploaded_data"
 
             df_combi_df_day = combine_df(
-                "time", place_name, place_df, df, "timestamp", "index", False
+                "time", params["place"], place_df, df, "count", "index", False
             )
 
             df_combi_df_day = df_combi_df_day.reset_index()
 
-            fig = draw_data(df_combi_df_day, "is_holiday")
-            st.plotly_chart(fig, use_container_width=True)
+            fig = draw_data(df_combi_df_day, "is_holiday_x")
+            st.plotly_chart(fig, use_container_width=True, **{"config": CONFIG})
 
 
 def app():
@@ -177,8 +181,8 @@ def app():
     image = Image.open(pic_url)
     st.image(image, caption=params["place"])
 
-    fig = draw_data(sss.df_day, "is_holiday")
-    st.plotly_chart(fig, use_container_width=True)
+    fig = draw_data(sss.df_day, "is_holiday_x")
+    st.plotly_chart(fig, use_container_width=True, **{"config": CONFIG})
 
-    comp_input_trend(place_name, sss.df_day, params)
-    comp_csv_trend(place_name, sss.df_day)
+    comp_input_trend(sss.df_day, params)
+    comp_csv_trend(params["place"], sss.df_day)
