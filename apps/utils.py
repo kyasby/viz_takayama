@@ -130,6 +130,21 @@ def set_params(is_map=False):
             date_end = date(2021, 8, 31)
         elif date_type == "全期間":
             date_start = date(2021, 6, 26)
+    elif place == "ハラサイクル":
+        # 指定した日付を含む
+        today = date(2021, 11, 5)
+        date_end = today
+        if date_type == "直近1週間":
+            date_start = date(2021, 10, 30)
+        elif date_type == "直近2週間":
+            date_start = date(2021, 10, 23)
+        elif date_type == "直近1ヶ月":
+            date_start = date(2021, 10, 5)
+        elif date_type == "夏休み":
+            date_start = date(2021, 7, 22)
+            date_end = date(2021, 8, 31)
+        elif date_type == "全期間":
+            date_start = date(2021, 6, 26)
     else:
         # 指定した日付を含む
         today = date(2021, 11, 20)
