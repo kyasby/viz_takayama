@@ -86,6 +86,8 @@ def draw_comparison(place_name, place_df):
                 sss.count_col,
                 sss.day_col,
             )
+
+            st.table(sss.df_combi_df_week)
             fig = px.bar(
                 sss.df_combi_df_week,
                 y="count",

@@ -101,6 +101,11 @@ def comp_csv_trend(place_name, place_df):
             st.dataframe(sss.uploaded_df_day.head(3))
 
             sss.uploaded_df_day = jp_holiday.is_holiday(sss.uploaded_df_day, sss.day_col, "is_holiday")
+            # st.table(uploaded)
+
+            sss.uploaded_df_day["time"] = sss.uploaded_df_day[sss.day_col].dt.hour
+
+            sss.uploaded_df_day = sss.uploaded_df_day.groupby("time").mean().reset_index()
 
             sss.df_combi_df_day = combine_df(
                 "time",
@@ -146,7 +151,7 @@ def comp_input_trend(place_df, params):
                     st.error(f"{k}時に変な値が入っています。数字を入力してね")
                 except Exception as e:
                     st.error(f"予期せぬエラーです。ページを再読み込みしてみてください。{e}")
-            sss.input_dict[k] = 10  # for debug
+            # sss.input_dict[k] = 10  # for debug
 
         if st.button("比較する"):
             for k, v in sss.input_dict.items():
@@ -164,12 +169,12 @@ def comp_input_trend(place_df, params):
             df["is_holiday_x"] = "uploaded_data"
 
             df_combi_df_day = combine_df(
-                "time", params["place"], place_df, df, "count", "index", False
+                "time", params["place"], place_df, df, "count", "time", False
             )
 
             df_combi_df_day = df_combi_df_day.reset_index()
 
-            fig = draw_data(df_combi_df_day, "is_holiday_x")
+            fig = draw_data(df_combi_df_day, "type")
             st.plotly_chart(fig, use_container_width=True, **{"config": CONFIG})
 
 

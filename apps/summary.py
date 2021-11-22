@@ -199,7 +199,19 @@ def app():
     params = set_params()
     pic_url, place_name, sss.df_summary, hol_edge = load_date("day", params, two_weeks=True)
 
-    st.title(f'{params["place"]}の分析の概要')
+    today = params["today"] + timedelta(days=1)
+    week_today = str(today.weekday())
+    tbl = str.maketrans({"0": "月曜",
+    "1": "火曜",
+    "2": "水曜",
+    "3": "木曜",
+    "4": "金曜",
+    "5": "土曜",
+     "6": "日曜"})
+
+    week_today = week_today.translate(tbl)
+
+    st.title(f'{today}({week_today})の{params["place"]}の分析の概要')
     image = Image.open(pic_url)
     st.image(image, caption=params["place"])
 

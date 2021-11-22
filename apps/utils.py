@@ -112,23 +112,39 @@ def set_params(is_map=False):
     #     value=date(2021, 10, 21),
     # )
 
-    DAY_TYPE = ["直近1週間", "直近2週間", "直近1ヶ月", "夏休み", "全期間"]
+    DAY_TYPE = ["直近1ヶ月", "直近1週間", "直近2週間", "夏休み", "全期間"]
     date_type = st.sidebar.selectbox("日付を選んでください！", DAY_TYPE)
 
-    # 指定した日付を含む
-    today = date(2021, 11, 20)
-    date_end = today
-    if date_type == "直近1週間":
-        date_start = date(2021, 11, 13)
-    elif date_type == "直近2週間":
-        date_start = date(2021, 11, 6)
-    elif date_type == "直近1ヶ月":
-        date_start = date(2021, 10, 20)
-    elif date_type == "夏休み":
-        date_start = date(2021, 7, 22)
-        date_end = date(2021, 8, 31)
-    elif date_type == "全期間":
-        date_start = date(2021, 6, 26)
+    if place == "まるっとプラザ":
+        # 指定した日付を含む
+        today = date(2021, 11, 12)
+        date_end = today
+        if date_type == "直近1週間":
+            date_start = date(2021, 11, 5)
+        elif date_type == "直近2週間":
+            date_start = date(2021, 10, 30)
+        elif date_type == "直近1ヶ月":
+            date_start = date(2021, 10, 12)
+        elif date_type == "夏休み":
+            date_start = date(2021, 7, 22)
+            date_end = date(2021, 8, 31)
+        elif date_type == "全期間":
+            date_start = date(2021, 6, 26)
+    else:
+        # 指定した日付を含む
+        today = date(2021, 11, 20)
+        date_end = today
+        if date_type == "直近1週間":
+            date_start = date(2021, 11, 13)
+        elif date_type == "直近2週間":
+            date_start = date(2021, 11, 6)
+        elif date_type == "直近1ヶ月":
+            date_start = date(2021, 10, 20)
+        elif date_type == "夏休み":
+            date_start = date(2021, 7, 22)
+            date_end = date(2021, 8, 31)
+        elif date_type == "全期間":
+            date_start = date(2021, 6, 26)
 
 
     # 日本語と英語の表
@@ -171,16 +187,16 @@ def set_params(is_map=False):
         obj = yaml.safe_load(f)
 
     place_obj = obj["まるっとプラザ"]
-    url       = place_obj["url"]["csv"]
+    url       = "./data/csv/サンプル.csv"
 
-    st.sidebar.download_button("比較用のサンプルデータをダウンロードする", pd.read_csv(url).to_csv(), "サンプル.csv")
+    st.sidebar.download_button("比較用のサンプルデータをダウンロードする", pd.read_csv(url).to_csv(index=False), "サンプル.csv")
 
     params = {
         "obj_type_selector": obj_type_selector,
         "date_start": date_start,
         "date_end": date_end,
         "place": place,
-        "today": today
+        "today": today,
     }
     return params
 
@@ -234,9 +250,11 @@ def convert_df(
     place_name,
     count_col,
     should_extract,
+    rename_col=None,
     dim_col="day",
     dim="D",
     period=7,
+
 ):
 
     if dim_type == "day":
@@ -272,21 +290,27 @@ def convert_df(
             lambda x: l_order.index(x) if x in l_order else -1)
         df = df.sort_values("order")
 
+        if rename_col:
+            df[rename_col] = df[count_col]
+
     elif dim_type == "time":
-        df = df.groupby(["time"]).mean()
+        df = df.groupby(["time"]).mean().reset_index()
+
+        if rename_col:
+            df[rename_col] = df[count_col]
 
     df["type"] = place_name
 
     return df
 
 
-@st.experimental_memo(suppress_st_warning=True)
+# @st.experimental_memo(suppress_st_warning=True)
 def combine_df(
     dim_type, place_name, place_df, uploaded, count_col, dim_col, should_extract=False
 ):
 
     place_df = convert_df(
-        dim_type, place_df, place_name, "count", should_extract, dim_type
+        dim_type, place_df, place_name, "count", should_extract,  None, dim_col=dim_type
     )
 
     if dim_type == "week":
@@ -294,11 +318,12 @@ def combine_df(
         uploaded["week"] = uploaded["week"].replace(
             {0: "月曜", 1: "火曜", 2: "水曜", 3: "木曜", 4: "金曜", 5: "土曜", 6: "日曜"}
         )
-    elif dim_type == "time":
-        uploaded["time"] = uploaded[dim_col].dt.hour
-    
+    # elif dim_type == "time":
+    #     st.table(uploaded)
+    #     uploaded["time"] = uploaded[dim_col].dt.hour
+
     uploaded = convert_df(
-        dim_type, uploaded, "アップロードされたデータ", count_col, should_extract, dim_col
+        dim_type, uploaded, "アップロードされたデータ", count_col, should_extract, "count", dim_col
     )
 
     df = pd.concat([place_df, uploaded], axis=0)

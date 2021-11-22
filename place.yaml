@@ -1,13 +1,13 @@
 まるっとプラザ:
   url:
-    csv: ./data/csv/plaza.csv
+    csv: ./data/csv/plaza_all.csv
     pic: ./data/pic/marutto.png
   area:
     - plaza_right_far
     - plaza_left_far
 十六銀行高山支店:
   url:
-    csv: ./data/csv/zoom.csv
+    csv: ./data/csv/juroku_zoom.csv
     pic: ./data/pic/juroku.png
   area:
     - juroku_zoom
@@ -19,7 +19,7 @@
     - conv_hashi
 陣屋前交差点:
   url:
-    csv: ./data/csv/conv_crossing.csv
+    csv: ./data/csv/conv_crossing_three_line_conved_time_edge.csv
     pic: ./data/pic/conv_crossing.png
   area:
     - conv_crossing_right_person
